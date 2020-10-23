@@ -67,15 +67,26 @@ contract SupplyChain {
    */
   
   
-  /// modifier forSale
-  /// modifier sold
-  /// modifier shipped
-  /// modifier received
+   modifier forSale(uint _sku){
+   require (items[_sku].state ==State.ForSale && items[_sku].price > 0);
+   _;}
+   modifier sold(uint _sku){
+   require (items[_sku].state ==State.Sold);
+   _;}
+   modifier shipped(uint _sku){
+   require (items[_sku].state ==State.Shipped);
+   _;}
+   modifier received(uint _sku){
+   require (items[_sku].state ==State.Received
+);
+   _;}
 
 
   constructor() public {
     /* Here, set the owner as the person who instantiated the contract
        and set your skuCount to 0. */
+    owner = msg.sender;
+    skuCount =0;
   }
 
   function addItem(string memory _name, uint _price) public returns(bool){
