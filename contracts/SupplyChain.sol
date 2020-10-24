@@ -25,14 +25,21 @@ contract SupplyChain {
     Received
     (declaring them in this order is important for testing)
   */
-   enum State {ForSale,Sold,Shipped, Received};
+   enum State {ForSale,Sold,Shipped, Received}
   /* Create a struct named Item.
     Here, add a name, sku, price, state, seller, and buyer
     We've left you to figure out what the appropriate types are,
     if you need help you can ask around :)
     Be sure to add "payable" to addresses that will be handling value transfer
   */
-   struct Item (string name,uint sku,uint price, State state, address payable seller, address payable buyer);/
+   struct Item {
+   string name;
+   uint sku;
+   uint price;
+   State state;
+   address payable seller;
+   address payable buyer;
+   }
   /* Create 4 events with the same name as each possible State (see above)
     Prefix each event with "Log" for clarity, so the forSale event will be called "LogForSale"
     Each event should accept one argument, the sku */
@@ -102,17 +109,16 @@ contract SupplyChain {
     if the buyer paid enough, and check the value after the function is called to make sure the buyer is
     refunded any excess ether sent. Remember to call the event associated with this function!*/
 
-  function buyItem(uint sku) payable forSale(sku) paidEnough(items[sku].price) checkValue(sku)  public{
+  function buyItem(uint sku) forSale(sku) paidEnough(items[sku].price) checkValue(sku) payable public{
+  items[sku].state = State.Sold;
   items[sku].seller.transfer(items[sku].price);
   items[sku].buyer = msg.sender;
-  items[sku].state = State.Sold;
   emit LogSold(sku);
 }
 
   /* Add 2 modifiers to check if the item is sold already, and that the person calling this function
   is the seller. Change the state of the item to shipped. Remember to call the event associated with this function!*/
-  function shipItem(uint sku) sold(sku) verifyCaller(items[sku].seller)
-    public{
+  function shipItem(uint sku)public sold(sku) verifyCaller(items[sku].seller){
   items[sku].state=State.Shipped;
   emit LogShipped(sku);
 }
